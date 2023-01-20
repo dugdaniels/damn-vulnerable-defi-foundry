@@ -9,7 +9,7 @@ Working through the solutions currently. I'll update this README as I go.
 - [x] The Rewarder
 - [x] Selfie
 - [x] Compromised
-- [ ] Puppet
+- [x] Puppet
 - [ ] Puppet V2
 - [ ] Free Rider
 - [ ] Backdoor
