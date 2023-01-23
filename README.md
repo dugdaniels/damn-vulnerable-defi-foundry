@@ -11,7 +11,7 @@ Working through the solutions currently. I'll update this README as I go.
 - [x] Compromised
 - [x] Puppet
 - [x] Puppet V2
-- [ ] Free Rider
+- [x] Free Rider
 - [ ] Backdoor
 - [ ] Climber
 - [ ] Wallet Mining

