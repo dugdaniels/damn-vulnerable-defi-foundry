@@ -12,7 +12,7 @@ Working through the solutions currently. I'll update this README as I go.
 - [x] Puppet
 - [x] Puppet V2
 - [x] Free Rider
-- [ ] Backdoor
+- [x] Backdoor
 - [ ] Climber
 - [ ] Wallet Mining
 - [ ] Puppet V3
