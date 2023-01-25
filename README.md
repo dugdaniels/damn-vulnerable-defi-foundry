@@ -13,7 +13,7 @@ Working through the solutions currently. I'll update this README as I go.
 - [x] Puppet V2
 - [x] Free Rider
 - [x] Backdoor
-- [ ] Climber
+- [x] Climber
 - [ ] Wallet Mining
 - [ ] Puppet V3
 - [ ] ABI Smuggling
